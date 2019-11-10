@@ -1,0 +1,13 @@
+version: "2"
+domain: cluster.x-k8s.io
+repo: sigs.k8s.io/cluster-api-provider-alicloud
+resources:
+- group: infrastructure
+  version: v1alpha2
+  kind: AlicloudMachine
+- group: infrastructure
+  version: v1alpha2
+  kind: AlicloudCluster
+- group: infrastructure
+  version: v1alpha2
+  kind: AlicloudMachineTemplate

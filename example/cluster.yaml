@@ -1,0 +1,53 @@
+---
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  name: testcluster
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 100.96.0.0/11
+    serviceDomain: cluster.local
+    services:
+      cidrBlocks:
+        - 100.64.0.0/13
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+    kind: AlicloudCluster
+    name: testalicloudcluster
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: AlicloudCluster
+metadata:
+  name: testalicloudcluster
+spec:
+  # 详细文档见 config/crd/base/infrastructure.cluster.x-k8s.io_alicloudclusters.yaml
+  regionId: "cn-zhangjiakou"              # 地域, https://help.aliyun.com/document_detail/40654.html
+  zoneId: "cn-zhangjiakou-a"              # 可用区, https://help.aliyun.com/document_detail/36063.html
+  network:                                # 网络配置
+    vpc:                                  # 专有网络, 使用云资源前, 必须先创建一个专有网络和交换机
+      vpcName: "capal-testvpc"            # 专有网络名称
+      cidrBlock: "192.168.0.0/16"         # 专有网络网段
+    vSwitch:                              # 交换机, 使用云资源前, 必须先创建一个专有网络和交换机
+      vSwitchName: "capal-testvsw"        # 交换机的名称
+      cidrBlock: "192.168.0.0/24"         # 交换机的网段
+    nat:                                  # NAT网关相关配置, 在VPC环境下构建一个公网流量的出入口
+      natGateway:                         # NAT网关
+        name: "capal-testngw"             # NAT网关的名称
+      eip:                                # 弹性公网IP, 配置DNAT或SNAT功能前，需要为已创建的NAT网关绑定弹性公网IP
+        bandwidth: "100"                  # EIP的带宽峰值，单位为Mbps
+    slb:                                  # 负载均衡, 流量分发到apiserver
+      loadBalancerName: "capal-testslb"   # 负载均衡实例的名称
+      addressType: "internet"             # 创建公网负载均衡
+      bandwidth: "100"                    # 监听的带宽峰值
+      addressIPVersion: "ipv4"            # 负载均衡实例的IP版本
+      vServerGroupName: "capal-testslbvg" # 后端服务器组名
+    securityGroup:                        # 安全组, 在创建ECS实例时必须指定安全组，每台ECS实例至少属于一个安全组
+      securityGroupName: "capal-testsg"   # 安全组名称
+      rules:                              # 安全组入方向规则
+        - nicType: "internet"             # 公网网卡
+          ipProtocol: "tcp"               # 传输层协议
+          sourceCidrIp: "0.0.0.0/0"       # 源端IP地址范围
+          portRange: "22/22"              # 目的端安全组开放的传输层协议相关的端口范围
+

@@ -1,0 +1,132 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cluster-api
+rules:
+- apiGroups:
+  - "cluster.x-k8s.io"
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - "infrastructure.cluster.x-k8s.io"
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - "bootstrap.cluster.x-k8s.io"
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - events
+  - secrets
+  verbs:
+  - "*"
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cluster-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-api
+subjects:
+- kind: ServiceAccount
+  name: cluster-api
+  namespace: default
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bootstrap-provider
+  labels:
+    app: bootstrap-provider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bootstrap-provider
+  template:
+    metadata:
+      labels:
+        app: bootstrap-provider
+    spec:
+      containers:
+      - name: kubeadm
+        image: registry.cn-hangzhou.aliyuncs.com/oamoss/clusterapi:bootstrap-kubeadm-0.1.1
+      serviceAccountName: cluster-api
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-api
+  labels:
+    app: cluster-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cluster-api
+  template:
+    metadata:
+      labels:
+        app: cluster-api
+    spec:
+      containers:
+      - name: cluster-provider
+        image: registry.cn-hangzhou.aliyuncs.com/oamoss/clusterapi:core-v1alpha2
+      serviceAccountName: cluster-api
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infra-aliyun
+  labels:
+    app: infra-aliyun
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infra-aliyun
+  template:
+    metadata:
+      labels:
+        app: infra-aliyun
+    spec:
+      containers:
+      - name: infra-aliyun
+        image: registry.cn-hangzhou.aliyuncs.com/oamoss/clusterapi:infra-aliyun-0.1.2
+        env:
+        - name: REGION_ID
+          value: ${REGION_ID}
+        - name: ACCESS_KEY_ID
+          value: ${ACCESS_KEY_ID}
+        - name: ACCESS_SECRET
+          value: ${ACCESS_SECRET}
+      serviceAccountName: cluster-api
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+

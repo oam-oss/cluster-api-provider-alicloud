@@ -1,0 +1,175 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: (devel)
+  creationTimestamp: null
+  name: alicloudmachines.infrastructure.cluster.x-k8s.io
+spec:
+  group: infrastructure.cluster.x-k8s.io
+  names:
+    kind: AlicloudMachine
+    listKind: AlicloudMachineList
+    plural: alicloudmachines
+    singular: alicloudmachine
+  scope: ""
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: AlicloudMachine is the Schema for the alicloudmachines API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: AlicloudMachineSpec defines the desired state of AlicloudMachine
+          properties:
+            capacityReservationId:
+              type: string
+            imageId:
+              type: string
+            instanceType:
+              type: string
+            internetChargeType:
+              type: string
+            internetMaxBandwidthIn:
+              type: string
+            internetMaxBandwidthOut:
+              type: string
+            providerID:
+              type: string
+            sshKeyPair:
+              type: string
+            systemDiskCategory:
+              type: string
+            systemDiskSize:
+              type: string
+          type: object
+        status:
+          description: AlicloudMachineStatus defines the observed state of AlicloudMachine
+          properties:
+            addresses:
+              description: MachineAddresses is a slice of MachineAddress items to
+                be used by infrastructure providers.
+              items:
+                description: MachineAddress contains information for the node's address.
+                properties:
+                  address:
+                    description: The machine address.
+                    type: string
+                  type:
+                    description: Machine address type, one of Hostname, ExternalIP
+                      or InternalIP.
+                    type: string
+                required:
+                - address
+                - type
+                type: object
+              type: array
+            errorMessage:
+              type: string
+            errorReason:
+              type: string
+            id:
+              type: string
+            instance:
+              properties:
+                CPU:
+                  type: integer
+                Cpu:
+                  type: integer
+                CreationTime:
+                  type: string
+                Description:
+                  type: string
+                DeviceAvailable:
+                  type: boolean
+                ExpiredTime:
+                  type: string
+                HostName:
+                  type: string
+                ImageId:
+                  type: string
+                InstanceChargeType:
+                  type: string
+                InstanceId:
+                  type: string
+                InstanceName:
+                  type: string
+                InstanceNetworkType:
+                  type: string
+                InstanceType:
+                  type: string
+                InstanceTypeFamily:
+                  type: string
+                InternetChargeType:
+                  type: string
+                InternetMaxBandwidthIn:
+                  type: integer
+                InternetMaxBandwidthOut:
+                  type: integer
+                IsSpot:
+                  type: boolean
+                KeyPairName:
+                  type: string
+                LocalStorageAmount:
+                  type: integer
+                LocalStorageCapacity:
+                  format: int64
+                  type: integer
+                Memory:
+                  type: integer
+                NetworkType:
+                  type: string
+                OSName:
+                  type: string
+                OSNameEn:
+                  type: string
+                OSType:
+                  type: string
+                OsType:
+                  type: string
+                RegionId:
+                  type: string
+                SerialNumber:
+                  type: string
+                StartTime:
+                  type: string
+                Status:
+                  type: string
+                StoppedMode:
+                  type: string
+                VlanId:
+                  type: string
+                ZoneId:
+                  type: string
+              type: object
+            phase:
+              type: string
+            ready:
+              type: boolean
+          type: object
+      type: object
+  version: v1alpha2
+  versions:
+  - name: v1alpha2
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

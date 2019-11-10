@@ -1,0 +1,112 @@
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: Machine
+metadata:
+  name: testcluster-controlplane-0
+  labels:
+    cluster.x-k8s.io/control-plane: "true"
+    cluster.x-k8s.io/cluster-name: "testcluster"
+spec:
+  version: v1.14.4
+  bootstrap:
+    configRef:
+      apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+      kind: KubeadmConfig
+      name: testcluster-controlplane-0
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+    kind: AlicloudMachine
+    name: testcluster-controlplane-0
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: AlicloudMachine
+metadata:
+  name: testcluster-controlplane-0
+spec:
+  instanceType: ecs.c6.large
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+kind: KubeadmConfig
+metadata:
+  name: testcluster-controlplane-0
+spec:
+  initConfiguration:
+    nodeRegistration:
+       kubeletExtraArgs:
+          max-pods: "30"
+    localAPIEndpoint:
+       advertiseAddress: "0.0.0.0"
+       bindPort: 0
+---
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: Machine
+metadata:
+  name: testcluster-controlplane-1
+  labels:
+    cluster.x-k8s.io/control-plane: "true"
+    cluster.x-k8s.io/cluster-name: "testcluster"
+spec:
+  version: v1.14.4
+  bootstrap:
+    configRef:
+      apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+      kind: KubeadmConfig
+      name: testcluster-controlplane-1
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+    kind: AlicloudMachine
+    name: testcluster-controlplane-1
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: AlicloudMachine
+metadata:
+  name: testcluster-controlplane-1
+spec:
+  instanceType: ecs.c6.large
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+kind: KubeadmConfig
+metadata:
+  name: testcluster-controlplane-1
+spec:
+  joinConfiguration:
+    controlPlane: {}
+    nodeRegistration:
+       kubeletExtraArgs:
+          max-pods: "30"
+---
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: Machine
+metadata:
+  name: testcluster-controlplane-2
+  labels:
+    cluster.x-k8s.io/control-plane: "true"
+    cluster.x-k8s.io/cluster-name: "testcluster"
+spec:
+  version: v1.14.4
+  bootstrap:
+    configRef:
+      apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+      kind: KubeadmConfig
+      name: testcluster-controlplane-2
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+    kind: AlicloudMachine
+    name: testcluster-controlplane-2
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: AlicloudMachine
+metadata:
+  name: testcluster-controlplane-2
+spec:
+  instanceType: ecs.c6.large
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+kind: KubeadmConfig
+metadata:
+  name: testcluster-controlplane-2
+spec:
+  joinConfiguration:
+    controlPlane: {}
+    nodeRegistration:
+       kubeletExtraArgs:
+           max-pods: "30"

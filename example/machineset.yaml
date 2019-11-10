@@ -1,0 +1,50 @@
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: MachineDeployment
+metadata:
+  name: testcluster-md-0
+  labels:
+    cluster.x-k8s.io/cluster-name: testcluster
+    nodepool: nodepool-0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: testcluster
+      nodepool: nodepool-0
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: testcluster
+        nodepool: nodepool-0
+    spec:
+      version: v1.14.4
+      bootstrap:
+        configRef:
+          name: testcluster-md-0
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+          kind: KubeadmConfigTemplate
+      infrastructureRef:
+        name: testcluster-md-0
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+        kind: AlicloudMachineTemplate
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: AlicloudMachineTemplate
+metadata:
+  name: testcluster-md-0
+spec:
+  template:
+    spec:
+      instanceType: ecs.c6.large
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+kind: KubeadmConfigTemplate
+metadata:
+  name: testcluster-md-0
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            network-plugin: "cni"
